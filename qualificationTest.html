@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script>
+            
+            
+            
+            var done_can_submit = false;
+            var timer;
+            
+            
+            function gid(id) {
+                    return document.getElementById(id);
+            }
+        
+            function gname(name) {
+                return document.getElementsByName(name)[0];
+            }
+        
+        
+            function tick() {
+                timer = new Date();
+            }
+        
+            function tock() {
+                return (new Date() - timer);
+            }
+        
+            function showInstructions(){
+            
+                if (gid("instructions").style.display == undefined || gid("instructions").style.display == "none"){
+                    gid("instructions").style.display = "block";
+                    gname("instCounter").value = parseInt(gname("instCounter").value) + 1;
+                }else{
+                    gid("instructions").style.display = "none";
+                }
+            }
+        
+        
+            function qualTest(){
+                var test_result = true ;
+                for (var i = 1; i< 5; i++){
+                    
+                    var question_result = false;
+                    var emptyAnswer = true;
+               
+                    for (var j = 1; j< 4; j++){
+                        
+                        var radio = gid('s'+i+j);
+                        
+                        if (radio.value == "correct" && radio.checked){
+                            
+                            question_result = true;
+                            emptyAnswer = false;
+                        }
+                        else if(radio.checked){
+                            
+                            emptyAnswer = false;
+                        }
+                    }
+                    
+                    if(emptyAnswer === true){
+    
+                        alert("Please answer all the questions and press the submit button again.");
+                        return;
+                    }
+                    
+                    var tmp = test_result;
+                    test_result = tmp && question_result ;
+                    
+                }
+                if (test_result == true) {
+
+                    gid('qualified').style.display = 'block'
+                    gname("testResult").value = "1"
+                }else{
+                    
+                    gid('notQualified').style.display = 'block'
+                    gname("testResult").value = "0"
+                }
+                gid('I1_submitButton').style.display='none';
+                gid('I1_previousButton').style.display='none';
+                console.log(gname("testResult").value);
+            
+                
+                for (var i=1; i<5; i++){
+                    for (var j=1; j<4; j++){
+                        gid("s"+i+j).disabled = true;
+                    }
+                    
+                }
+                
+                done_can_submit = true;
+                
+            }
+        
+            setInterval(function () {
+                        var button = gid("submitButton");
+                        if (!button) return;
+                        button.style.display = done_can_submit ? "block" : "none";
+                        button.disabled = !done_can_submit;
+                        }, 100)
+                    
+      
+    </script>
+        
+        
+        <style>
+        
+        
+        .buttonlink {
+            display: inline-block;
+            border-style: solid;
+            border-color: #bbb #888 #666 #aaa;
+            border-width: 3px 4px 4px 3px;
+            width: 9em;
+            height: 2em;
+            background-color: 	#FAEBD7;
+            line-height: 2;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 900;
+            cursor:pointer;
+        }
+        
+        .buttonlink:hover {
+            border-color: #666 #aaa #bbb #888;
+            border-width: 4px 3px 3px 4px;
+            color: #000;
+        }
+        
+        .visible
+        {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 2s linear;
+        }
+        
+        .hidden
+        {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s linear;
+        }
+        
+        
+        table {
+            border-collapse: collapse;
+            border-spacing: 10px 50px;
+            text-align: center;
+            clear: left;
+            
+        }
+        
+        th, td{
+            padding: 2px;
+            
+        }
+        
+        input {
+            width: 100px;
+            margin: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            /*             border: 5px ;  */
+        }
+        
+        
+        .colorTableHead {
+            color:#0000FF;
+        }
+        input[type="text"] {
+            width: 85%;
+            height: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing: border-box;
+            style="background-color:#FCF5D8;">
+        }
+        .container{
+            /* width : 500px; */
+            width: 300px;
+            border: 2px solid #DAA520;
+            padding: 25px;
+            margin: 25px;
+        }
+        
+        
+        
+        
+            </style>
+    </head>
+    
+    <body>
+        
+        <!------------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div id="welcome"; style="display:block ; margin-left:30px; margin-right:30px">
+            
+            <p align="justify"> Hello! This is a qualification test for our study. Please read the below article carefully and answer the questions following it. If you answer all the questions correctly, you will qualify for our study. </p>
+            <p><font color="blue">This test will take about 5 minutes and we will pay you $2 .</font></p>
+            
+            <div id="welcome_nextButton" class="buttonlink" style="display:block" onclick="gid('article').style.display='block'; gid('welcome').style.display = 'none'; tick()">Start</div>
+        </div>
+        
+        
+        <!------------------------------------------------------------------------------------------------------------------------------------------------->
+        <div id="article"; style="display:none ; margin-left:30px; margin-right:30px">
+            
+            <p align="justify">
+            
+            It is not safe to use the same password for all your accounts at different websites. Why? Because if someone hacks into one website, they can break into the rest of your accounts. A CNN report shows that the accounts of 110 million people have been hacked during the year of 2014. If a hacker obtains a user’s password, the first thing he or she does is to check whether or not that password works for other websites. Many these 110 million people experienced a chain of hacks into all their accounts because they used the same password on multiple sites. Getting hacked can cause loss of money, loss of work, loss of data, can lead to bad credit, etc.</p>
+            
+            <p>Therefore, it is recommended to have different passwords for different websites. But who can remember them? In this HIT, we will teach you a new strategy for making a different password for each of your accounts. Furthermore, our strategy allows you to remember all the new passwords that you create, without memorizing them! You do not need any software or external device to adopt our methods.</p>
+            
+            
+            <div id="article_nextButton" class="buttonlink" style="display:block" onclick="gid('test').style.display='block'; gid('article').style.display = 'none';">Start the test</div>
+            
+            
+        </div>
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div id= "test" style="display:none; margin-left:30px; margin-right:30px">
+            
+            <p class="question"><b>1. Why is it unsafe to use the same password on multiple websites?</b></p>
+            <ul class="answers">
+                
+                <table>
+                    <tr>
+                        <td align = "left">
+                <input type="radio" name="s1" value="wrong" id="s11"><label for="s1a">If a hacker obtains one of your passwords, he or she tries to login to your other accounts using that password.
+                </label>
+                </td>
+                        </tr>
+                    
+                    <tr>
+                        <td align = "left">
+                <input type="radio" name="s1" value="wrong" id="s12"><label for="s1b">If someone sees you typing your password over your shoulder, he/she can then access all your accounts.
+                </label>
+                </td>
+                        <tr>
+                
+                <tr>
+                    <td align = "left">
+                <input type="radio" name="s1" value="correct"  id="s13"><label for="s1c">Both a and b
+                </label>
+                </td>
+                    <tr>
+                        
+                        </table>
+                
+            
+            <p class="question"><b>2. Which of the following <font color="red">protects</font> your accounts from hacking?</b></p>
+            
+                <table>
+                
+                <tr>
+                    <td align = "left">
+                        
+                <input type="radio" name="s2" value="wrong" id="s21"><label for="s2a">Typing your password in front of others.
+                </label>
+                </td>
+                    </tr>
+                
+                <tr>
+                    <td align = "left">
+                <input type="radio" name="s2" value="wrong" id="s22"><label for="s2b">Sharing the same password between multiple websites.
+                </label>
+                </td>
+                    </tr>
+                
+                <tr>
+                    <td align = "left">
+                <input type="radio" name="s2" value="correct" id="s23"><label for="s2c">Choosing different passwords for different websites.
+                    
+                </label>
+                <td>
+                    <tr>
+                </table>
+            
+            
+            <p class="question"><b>3. How many accounts were hacked in 2014?</b></p>
+            
+                
+                <table>
+                    <tr>
+                        <td align = "left">
+                <input type="radio" name="s3" value="wrong" id="s31"><label for="s31"> 10 million
+                </label>
+                </td>
+                        </tr>
+                    
+                    <tr>
+                        <td align = "left">
+                <input type="radio" name="s3" value="correct" id="s32"><label for="s32"> 110 million
+                </label><br/>
+                </td>
+                        </tr>
+                    
+                    <tr>
+                        <td align = "left">
+                <input type="radio" name="s3" value="wrong" id="s33"><label for="s33"> 10 thousand
+                </label>
+                </td>
+                        <tr>
+                            
+                            </table>
+                
+            
+            
+            
+            <p class="question"><b>4. Which of the following is the goal of this study?</b></p>
+            
+                <table>
+                    <tr>
+                        <td align="left">
+                <input type="radio" name="s4" value="wrong" id="s41"><label for="s4a">We want to introduce you to new software that can fill in the password for your personal accounts automatically.
+                </label>
+                </td>
+                </tr>
+            
+                <tr>
+                    <td align="left">
+                <input type="radio" name="s4" value="correct" id="s42"><label for="s4b">We want to teach you a strategy for making different passwords for different websites and how to remember them.
+                </label>
+                </td>
+                    </tr>
+                
+                <tr>
+                    <td align="left">
+                <input type="radio" name="s4" value="wrong" id="s43"><label for="s4c">We want to teach you a strategy for how you can remember <u>your current passwords</u>.
+                </label>
+                </td>
+                    </tr>
+                </table>
+                
+                <br>
+                <br>
+                
+        <table>
+        <tr>
+            <td>
+                <div id="I1_previousButton" class="buttonlink" style="display:block" onclick="gid('test').style.display='none'; gid('article').style.display = 'block';">Previous page</div>
+            </td>
+            
+            <td>
+                <div id="I1_submitButton" class="buttonlink" style="display:block" onclick=" qualTest();"> Submit answers </div>
+            </td>
+        </tr>
+        
+        <div class="container" id="notQualified" style="display:none">
+            Thank you for your participation! You may now submit the HIT and you will recieve the $2 reward. We may reach out to you shortly.
+        </div>
+        
+        <div class="container" id="qualified" style="display:none">
+            <p>Congratulations, you are qualified for our study! If you wish to participate in the follow-up HITs, please enter your email below and we will send you an email soon with an invitation to participate. </p>
+            
+            <textarea rows="1" cols="30" placeholder="Email address" name="email"></textarea></li>
+            
+            <p>You may now submit this HIT and you will recieve the $2 reward. </p>
+            
+        </div>
+        
+            </div> <!-- closing the test div -->
+            
+        
+        
+        
+        <input type="hidden" name="testResult" value="0" />
+        <input type="hidden" name="articleTime" value="0" />
+        <input type="hidden" name="testTime" value="0" />
+        <input type="submit" id="submitButton">
+        
+    </body>
+</html>

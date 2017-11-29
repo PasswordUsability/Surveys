@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script>
+            
+            
+            var challenges = ["kite", "pillow", "atlantic", "bundle", "reverse" , "family", "quebec", "cough", "subject", "mugg", "spike", "fishing", "jumper", "knob", "chord"];
+            
+            var done_can_submit = false;
+            
+            var key = "";
+            var challenge = "";
+            var cResponse = "";
+            var vowels = "aeiou";
+            var flag1 = 1;
+            var flag2 = 1;
+            var webCounterVar = 1;
+            var timer;
+            var threeWord = "";
+            var specialString = "";
+            var wildcard = "";
+            var differentLetters = "";
+            var specialChars = "~`!#$%\^&*+=\-\[\]\\';,/{}|\\:<>\?\"";
+            var alphabet = "abcdefghijklmnopqrstuvwxyz"
+           
+            
+            var wordHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+            var instHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+            
+            
+            function gid(id) {
+                return document.getElementById(id);
+            }
+            function hint(el, text) {
+                el.innerText = text;
+            }
+        
+            function gname(name) {
+                return document.getElementsByName(name)[0];
+            }
+        
+        
+            function tick() {
+                timer = new Date();
+            }
+        
+            function tock() {
+                return (new Date() - timer);
+            }
+        
+        
+            function I1_eval() {
+                var guess1 = gname("I100").value.trim();
+            
+                if(guess1 == "cblmtjmxrB7!"){
+                
+                    gid("I1_checkButton").style.display='none';
+                    gid("I1_nextButton").style.display='block';
+                    gid("p_hint100").style.color='black'
+                    gid("p_hint100").style.display = 'block'
+                    gname("I1_try").style.display='none'
+                    gname("I1_correct").style.display = 'block'
+                    gid("I_hint100").style.display='none'
+                    gid("great").style.display='block'
+                }else{
+                
+                    gid("p_hint100").style.display = 'block'
+                    gid("p_hint100").style.color='red'
+                    gid("p_hint100").style.display = 'block'
+                    gname("I1_try").style.display='block'
+                    gid("I_hint100").style.display='block'
+                }
+                return;
+            }
+        
+            setInterval(function () {
+                        var button = gid("submitButton");
+                        if (!button) return;
+                        button.style.display = done_can_submit ? "block" : "none";
+                        button.disabled = !done_can_submit;
+                        }, 100)
+   
+        
+            function findNextLetter(index,key) {
+                var isFound = false;
+                while(!isFound) {
+                
+                    if (index >= key.length) {
+                        index = 0;
+                    }
+                
+                    if (vowels.indexOf(key.substring(index,index+1)) != -1) {
+                    
+                        index +=1;
+                        if (index >= key.length) {
+                            index = 0;
+                        }
+                    } else {
+                        isFound = true
+                    }
+                }
+                return key.substring(index,index+1);
+            }
+        
+        
+            function threeWordMap(challenge, key, wildcard) {
+                cResponse = "";
+                for (i = 0; i < challenge.length; i++) {
+                    var index = key.indexOf(challenge.substring(i,i+1));
+                    if (index == -1){
+                        cResponse += wildcard;
+                    }
+                    if( index != -1) {
+                        cResponse += findNextLetter(index+1,key);
+                    }
+                }
+                return cResponse;
+            }
+        
+        
+            function respond(challenge){
+            
+                flag=0;
+                for(i=0;i<threeWord.length;i++){
+                    if(vowels.indexOf(threeWord[i])==-1){
+                        flag=1;
+                    }
+                }
+                if(flag==0){
+                    alert("The Words must have CONSONANTS!!");
+                    return;
+                }
+            
+                fResponse = threeWordMap(challenge, threeWord, wildcard);
+                fResponse =  fResponse + specialString;
+            
+                return fResponse;
+            
+            }
+        
+            function checkRespond(challenge, guess){
+                
+                var a = respond(challenge);
+                if (a == guess){
+                    return 1;
+                }
+                else{
+                    return 0;
+                }
+            }
+        
+        
+            function I2_activateHints() {
+                var guess1 = gname("I200").value.trim();
+                var guess2 = gname("I201").value.trim();
+
+                cResponse1 = respond ("amazon");
+                if(cResponse1 != undefined ){
+                    cResponse2 = respond ("bestbuy");
+                }else{
+                    cResponse2="";
+                }
+            
+                if (cResponse1 != undefined){
+                    gid("p_hint200").innerHTML = cResponse1;
+                    gid("p_hint201").innerHTML = cResponse2;
+                }
+                else {
+                    gid("p_hint200").innerHTML = "";
+                    gid("p_hint201").innerHTML = "";
+                }
+            
+            
+                if(guess1 == cResponse1 && guess2 == cResponse2){
+                    gname("p_correct").style.display = 'block';
+                    gid("I2_checkButton").style.display='none';
+                    gid("I2_nextButton").style.display='block';
+                
+                    gid("p_hint200").style.color='black'
+                    if(guess1 != cResponse1)
+                    gid("p_hint200").style.color='red'
+                    else
+                    gid("p_hint200").style.color='black'
+                
+                    if(guess2 != cResponse2)
+                    gid("p_hint201").style.color='red'
+                    else
+                    gid("p_hint201").style.color='black'
+                
+                    gname("p_try").style.display='none'
+                }else{
+                    gname("p_try").style.display='block'
+                    gid("p_hint200").style.display='block'
+                    gid("p_hint201").style.display='block'
+                
+                
+                    gid("p_hint200").style.color='black'
+                    if(guess1 != cResponse1)
+                    gid("p_hint200").style.color='red'
+                    else
+                    gid("p_hint200").style.color='black'
+                    if(guess2 != cResponse2)
+                    gid("p_hint201").style.color='red'
+                    else
+                    gid("p_hint201").style.color='black'
+                }
+                return;
+            }
+        
+            function pauseVideo(){
+            
+                var iframe = gid("3wordStrategy");
+                iframe.src = iframe.src;
+            
+            }
+        
+            function showInstructions1(){
+            
+                if (flag1 == 1) {
+                    gid("instructionHint").style.display = "block"
+                }
+            
+                if (flag1 == -1) {
+                    gid("instructionHint").style.display = "none"
+                }
+                flag1 = flag1 * -1;
+            }
+        
+            function showInstructions2(){
+                if (flag2 == 1) {
+                    gid("instHint2").style.display = "block";
+                    increaseInstHintCount();
+                }
+            
+                if (flag2 == -1) {
+                    gid("instHint2").style.display = "none"
+                }
+                flag2 = flag2 * -1;
+            }
+        
+            function showWords(){
+            
+                threeWord = gname("Word1").value +
+                gname("Word2").value +
+                gname("Word3").value;
+            
+                specialString = gname("specialString").value;
+                wildcard = gname ("wildcard").value;
+            
+                gid("hintWords").innerHTML = threeWord;
+                gid("hintWildcard").innerHTML = wildcard;
+                gid("hintSpecialString").innerHTML = specialString;
+        
+                if(gid("3wordhint").style.display == "block"){
+                    gid("3wordhint").style.display="none";
+                }else{
+                    gid("3wordhint").style.display = "block";
+                    increaseWordHintCount();
+                }
+            }
+        
+
+            function saveFeedback(){
+                
+                for (var i = 1; i< 4; i++){
+                    
+                    var emptyAnswer = true;
+                    
+                    for (var j = 1; j< 8; j++){
+                        
+                        var radio = gid('q'+i+j);
+                        
+                        if(radio.checked){
+                            emptyAnswer = false;
+                        }
+                    }
+                    
+                    if(emptyAnswer === true){
+                        
+                        alert("Please answer all the questions and press the submit button again.");
+                        return;
+                    }
+                }
+                
+                for (var i = 4; i< 6; i++){
+                    
+                    var emptyAnswer = true;
+                    
+                    for (var j = 1; j< 3; j++){
+                        
+                        var radio = gid('q'+i+j);
+                        
+                        if(radio.checked){
+                            emptyAnswer = false;
+                        }
+                    }
+                    
+                    if(emptyAnswer === true){
+                        
+                        alert("Please answer all the questions and press the submit button again.");
+                        return;
+                    }
+                }
+                
+                    
+                for (var i = 1; i < 8; i++){
+                    var radio = gid('q1'+i)
+                    if (radio.checked){
+                        gname("funValue").value = radio.value;
+                    }
+                }
+                
+                for (var i = 1; i < 8; i++){
+                    var radio = gid('q2'+i)
+                    if (radio.checked){
+                        gname("easinessValue").value = radio.value;
+                    }
+                }
+                
+                for (var i = 1; i < 8; i++){
+                    var radio = gid('q3'+i)
+                    if (radio.checked){
+                        gname("easinessIncreaseValue").value = radio.value;
+                    }
+                }
+                
+                for (var i = 1; i < 3; i++){
+                    var radio = gid('q4'+i)
+                    if (radio.checked){
+                        gname("wroteDown").value = radio.value;
+                    }
+                }
+                
+                for (var i = 1; i < 3; i++){
+                    var radio = gid('q5'+i)
+                    if (radio.checked){
+                        gname("followUpSurveys").value = radio.value;
+                    }
+                }
+                
+                gid("saveFeedbackDiv").style.display = "block";
+                gid("saveFeedbackButton").style.display = "none";
+                gname("feedback_time").value = tock();
+                console.log("feedback tock!")
+                done_can_submit = true;
+            
+            }
+
+            var tries = 1;
+            var verify = false;
+            var qnum = 0;
+        
+            function eval_click_password(){
+            
+                // When the user presses Begin or Next
+                if ( (gid("eval_button").innerHTML == "Begin") || (gid("eval_button").innerHTML == "Next")){
+
+                    gid("introMessage").style.display = "none";
+                    gid("lastTable").style.display = "block";
+                    nextWeb();
+                    return;
+                }
+                
+                hideWordHint();
+                hideInstHint();
+                flag2 = 1;
+                    
+                var guess = gname("q" + qnum ).value.trim();
+                var gold = checkRespond(challenges[qnum], guess);
+                var correctPass = respond(challenges[qnum]);
+                var html;
+                
+                //logging
+                console.log("guess: " + guess);
+                console.log("correctPass: " + correctPass);
+                
+                
+                // user typed an empty password
+                if (guess == "" && (gid("eval_button").innerHTML == "Submit password")){
+                    gid("verify_div").innerHTML = "<span class='wrong'>Please enter a password.</span>"
+                    return;
+                }
+                
+                if ((tries <= 3) && (!verify)){
+                    
+                    gname("q"+qnum+"_"+tries).value = gold;
+                    console.log("q" + qnum + "_" +tries + ": " + gname("q"+qnum+"_"+tries).value)
+                    
+                    // last try and password is wrong
+                    if ((tries == 3)  && (gold == 0)){
+                    
+                        html = "<span class='wrong'>The correct answer would be <span class='pw'>" + correctPass + "</span>";
+                        gname("q" + qnum + "_correct").value = "0";
+                        gid("eval_button").innerHTML = "Next";
+                        gname("q" + (qnum)).readOnly = true;
+                        gname("q" + qnum + "_time").value = tock();
+                        console.log("q" + qnum + "_time : " + gname("q" + qnum + "_time").value );
+                        verify = true;
+                    }
+                    
+                    else{
+                    // Less than three tries and the password is wrong
+                        if (gold == 0){
+                            html = "<span class='wrong'>Try again!</span>";
+                            gname("q" + qnum).value = "";
+                            tries = tries + 1
+                            
+                        }
+                    // less than or equal to three tries and the password is correct
+                        else{
+                            html = "<span class='correct'>CORRECT!</span>";
+                            gname("q" + qnum + "_correct").value = "1";
+                            gid("eval_button").innerHTML = "Next";
+                            gname("q" + qnum).readOnly = true;
+                            gname("q" + qnum + "_time").value = tock();
+                            console.log("q" + qnum + "_time : " + gname("q" + qnum + "_time").value );
+                            verify = true;
+                        }
+                    }
+                    gid("verify_div").innerHTML = html;
+                    console.log("q"+ qnum + "_correct"+ ": " + gname("q" + qnum + "_correct").value );
+                }
+            }
+        
+            function increaseInstHintCount(){
+                instHintCountVar[qnum]++;
+                console.log("instHintCountVar[" + qnum + "]: " + instHintCountVar[qnum])
+            }
+        
+            function hideInstHint(){
+                gid("instHint2").style.display = "none";
+            }
+        
+        
+            function increaseWordHintCount(){
+                wordHintCountVar[qnum]++;
+                console.log("wordHintCountVar[" + qnum + "]: " + wordHintCountVar[qnum]);
+            }
+        
+            function hideWordHint(){
+                gid("3wordhint").style.display = "none";
+            }
+        
+            function nextWeb() {
+                
+                if (gid("eval_button").innerHTML != "Begin"){
+                    gname("q" + qnum).style.display = "none"
+                    qnum ++;
+                }
+            
+                if (qnum < challenges.length) {
+                    gname("q" + qnum).style.display = "block";
+                    gid("website_name").innerHTML = challenges[qnum];
+                    gid("website_name").style.font.weight = "300";
+                } else {
+                    gid("feedback").style.display = "block";
+                    gid("fun_div").style.display = "none";
+                    
+                    gname("wordHintCount").value = wordHintCountVar ;
+                    gname("instHintCount").value = instHintCountVar;
+                    console.log("wordHintCount: ", gname("wordHintCount").value);
+                    console.log("instHintCount: ", gname("instHintCount").value);
+                    
+                }
+                
+                verify = false;
+                tries = 1;
+                
+                increaseWebCounter();
+                hideWordHint();
+                hideInstHint();
+                flag2 = 1;
+                
+                gid("verify_div").innerHTML = "";
+                gid("eval_button").innerHTML = "Submit password";
+                
+                tick();
+                console.log("tick!")
+            }
+            
+            function increaseWebCounter(){
+                gid("webCounter").innerHTML = webCounterVar + "/" + challenges.length;
+                webCounterVar = webCounterVar + 1;
+            }
+        
+            function hasUpperCase(str) {
+                if (str.toLowerCase() == str){
+                    return false;
+                }
+                return true;
+            }
+        
+            function checkWordsLowerCase(){
+                
+                if ( !hasUpperCase(threeWord) ){
+                    return true;
+                }
+                return false;
+            }
+        
+            function isLetter(l){
+                console.log("inside isLetter")
+                if( l.toLowerCase() != l.toUpperCase() ) {
+                    return true;
+                }
+                return false;
+            }
+        
+            function checkDifferentLetters(){
+                differentLetters = "";
+                
+                console.log("inside checkDifferentLetters")
+                console.log("threewords: ", threeWord)
+                
+                for (var i = 0 ; i < threeWord.length ; i++){
+                    var currentLetter = threeWord[i];
+                    if (differentLetters.indexOf(currentLetter) == -1 && isLetter(currentLetter) ){
+                        differentLetters = differentLetters + currentLetter;
+                    }
+                }
+                
+                if (differentLetters.length < 15){
+                    return differentLetters.length;
+                }
+                return -1;
+            }
+        
+            function crossLettersofTable(){
+                
+                initializeTable();
+            
+                for (var i = 0; i < differentLetters.length ; i++){
+                    var l = differentLetters[i].toLowerCase();
+                    
+                    if(isLetter(l)){
+                        gid(l).innerHTML = "<span class='crossed'>" + l + "</span>";
+                    }
+                }
+                return;
+            }
+        
+            function initializeTable(){
+                for (var i = 0 ; i< alphabet.length ; i++){
+                    var a = alphabet[i];
+                    gid(a).innerHTML = "<span class='pw'>" + a + "</span>";
+                }
+            }
+        
+            function containSpecialChar(str){
+                for (var i = 0; i < specialChars.length ; i++){
+                    var char = specialChars[i];
+                    if (str.indexOf(char) != -1){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        
+            function containNumber(str){
+                for (var i = 0; i < 10 ; i++){
+                    var char = i;
+                    if (str.indexOf(char) != -1){
+                        return true;
+                    }
+                }
+                return false;
+            }
+        
+            function saveSecretKey(){
+                
+                threeWord = gname("Word1").value +
+                gname("Word2").value +
+                gname("Word3").value;
+                
+                //threeWord = "samiramehdiabdol"
+                
+                gname("saved3Words").value = threeWord;
+                
+                specialString = gname("specialString").value;
+                wildcard = gname("wildcard").value;
+                
+                //specialString = "7&"
+                //wildcard = "x"
+                
+            }
+        
+            function secretKeyValidated(){
+                
+                saveSecretKey();
+                
+                var alertMessage = "";
+                
+                if(threeWord == "") {
+                    alert("Please enter words");
+                    return ;
+                }
+                
+                if(wildcard == "") {
+                    alert("Please enter one letter to use as wild card");
+                    return;
+                }
+                
+                if(specialString == "") {
+                    alert("Please enter the special string.");
+                    return;
+                }
+                
+                if (!checkWordsLowerCase() && (checkDifferentLetters () == -1)){
+                    alert("Your words must only contain lower case letters. Please try again.")
+                }
+                else if(checkWordsLowerCase() && ( checkDifferentLetters () != -1) ){
+                    alertMessage = "Your words cover only " + checkDifferentLetters() + " letters. Please choose different words to cover at least 15 letters of the alphabet."
+                    alert(alertMessage);
+                    crossLettersofTable();
+                    gid("crossedMessage").style.display = "block";
+                }
+                else if ( (!checkWordsLowerCase()) && ( checkDifferentLetters () != -1) ){
+                    alert("Your words must contain only lower case letters." + alertMessage)
+                    crossLettersofTable();
+                    gid("crossedMessage").style.display = "block";
+                }
+                
+                else if (hasUpperCase(wildcard)){
+                    alert("Wildcard should be a lower case letter.")
+                }
+                
+                else if (!containSpecialChar(specialString)){
+                    alert("The special string must contain one of the special characters " + specialChars)
+                }
+                
+                else if(!containNumber(specialString)){
+                    alert("The special string must contain a number.")
+                }
+            
+                else if (!hasUpperCase(specialString)){
+                    alert("The special string must contain a capital letter.")
+                }
+                
+                else{
+                    gid("I2_validateButton").style.display = "none";
+                    gid("I2_checkButton").style.display = "block";
+                    gid("tryPasswords").style.display = "block";
+                    gid("I2_instructionsHint").style.display = "block";
+                    gid("crossedMessage").style.display = "none";
+                }
+                
+                return;
+            }
+
+        </script>
+        
+        
+        <style>
+            
+            
+            /* <input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+            </input>
+            
+            <textarea autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            </textarea> */
+        
+            .crossed{
+                text-decoration : line-through;
+                text-decoration-style : double;
+                font-weight: normal;
+            }
+            
+            .pw {
+                font-family: monospace;
+                font-size: 140%;
+                font-weight: bold;
+            }
+        
+            .hint {
+                color: black;
+                border : none;
+                font-size: 100%;
+                font-weight : bold;
+            }
+        
+            .correct {
+                color: green;
+            }
+        
+            .wrong {
+                color: red;
+            }
+        
+        
+            .buttonlink {
+                display: inline-block;
+                border-style: solid;
+                border-color: #bbb #888 #666 #aaa;
+                border-width: 3px 4px 4px 3px;
+                width: 9em;
+                height: 2em;
+                background-color: 	#FAEBD7;
+                line-height: 2;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 900;
+                cursor:pointer;
+            }
+        
+        
+            .buttonlink2 {
+                display: inline-block;
+                border-style: solid;
+                border-color: #bbb #888 #666 #aaa;
+                border-width: 3px 4px 4px 3px;
+                width: 9em;
+                height: 2em;
+                background-color: 	#FAEBD7;
+                line-height: 2;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 900;
+                cursor:pointer;
+                float : left;
+                margin-right:10px;
+            }
+        
+        
+        
+            .hintbutton {
+                display: inline-block;
+                border-style: solid;
+                border-color: #bbb #888 #666 #aaa;
+                border-width: 3px 4px 4px 3px;
+                width: 11em;
+                height: 2em;
+                background-color: #32CD32;
+                line-height: 2;
+                text-align: center;
+                text-decoration: none;
+                font-weight: 900;
+                cursor:pointer;
+                float : left;
+                margin-right:10px;
+            }
+        
+        
+        
+            .buttonlink:hover {
+                border-color: #666 #aaa #bbb #888;
+                border-width: 4px 3px 3px 4px;
+                color: #000;
+            }
+        
+            .visible
+            {
+                visibility: visible;
+                opacity: 1;
+                transition: opacity 2s linear;
+            }
+        
+            .hidden
+            {
+                visibility: hidden;
+                opacity: 0;
+                transition: visibility 0s 2s, opacity 2s linear;
+            }
+        
+        
+            table {
+                border-collapse: collapse;
+                border-spacing: 10px 50px;
+                text-align: center;
+                clear: left;
+            
+            }
+        
+            th, td{
+                padding: 2px;
+            
+            }
+        
+            input {
+                width: 100px;
+                margin: 5px;
+                font-size: 15px;
+                box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                -webkit-box-sizing: border-box;
+            }
+        
+        
+            .firstPageTable {
+                float:left;
+                margin:1em;
+                width:300px;
+                height:300px;
+            
+            }
+        
+            .colorTableHead {
+                color:#0000FF;
+            }
+        
+            input[type="text"] {
+                width: 85%;
+                height: 100%;
+                box-sizing: border-box;
+                -webkit-box-sizing:border-box;
+                -moz-box-sizing: border-box;
+                style="background-color:#FCF5D8;"
+            }
+        
+            .container{
+               
+                width: 300px;
+                border: 2px solid #DAA520;
+                padding: 25px;
+                margin: 25px;
+            }
+        
+            .container2{
+                width : 500px;
+                margin-left: 5px;
+            }
+            .container3{
+                width: 500px;
+                border: 2px solid #DAA520;
+                padding: 25px;
+                margin: 25px;
+            }
+        
+        </style>
+    </head>
+    <body>
+        
+        <div id="welcome"; style="display:block ; margin-left:50px; margin-right:50px">
+            
+            <p align="justify"> Hello! Thank you for participating in our study. In this HIT, we teach you a new strategy for generating secure passwords. You will learn how to create a different strong password for each of your accounts. Furthermore, our strategy allows you to remember all the new passwords that you create, without memorizing them! <font color = "blue"> This hit will take about 45 minutes and we will pay you $7. </font>
+            
+            <div id="I0_nextButton1" class="buttonlink" style="display:block" onclick="gid('warning').style.display='block'; gid('welcome').style.display = 'none'; ">Start</div>
+            <br>
+            <br>
+            
+            <!-- <div id="I0_skipButton1" class="buttonlink" style="display:block" onclick="gid('fun_div').style.display='block'; gid('welcome').style.display = 'none'; tick();">Skip1</div> -->
+            
+            <!-- <div id="I0_skiptButton2" class="buttonlink" style="display:block" onclick="gid('feedback').style.display='block'; gid('welcome').style.display = 'none'; tick();">Skip2</div> -->
+        </div>
+        
+        <!--------------------------------------------------------------------------------------------------------------------->
+        
+        <div id= "warning" style="display:none">
+            
+            <br>
+            <br>
+            <br>
+            <center>
+            <div class="container3">
+                The goal of this experiment is to try our mental algorithms to generate passwords. We ask you not to take any notes during this study (notes on paper or online notes). Only use what you see on the screen to answer the questions.
+                </div>
+            
+            <div class="container3">
+                The passwords that you generate in this study might be used and published for research purposes. Please don't include any real passwords or personal information.
+            </div>
+            </center>
+        
+            <br>
+            <br>
+            <center>
+                
+                <div id="warning_nextButton" class="buttonlink" style="display:block" onclick="gid('instructions').style.display='block'; gid('warning').style.display = 'none';tick()">Agree</div>
+                </div>
+      
+        
+        
+        <!----------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div id="instructions" style="display:none; margin-left:10px">
+            
+            <h1>Instructions</h1>
+            
+            <p>
+            In this hit we teach you a new strategy for generating secure passwords. The following video describes this strategy.
+            </p>
+            
+            <p>
+            <iframe id = "3wordStrategy" width="400"
+                height="300" src="https://www.youtube.com/embed/HqFhimpK1iM" frameborder="5" align="center" hspace="10">
+            </iframe>
+            </p>
+            
+            <p> Try generating one password to make sure you understood the method.</p>
+            
+            <table border="1">
+                <tr>
+                    <th>3Words</th>
+                    <th>Wildcard</th>
+                    <th>Special String</th>
+                </tr>
+                <tr>
+                    <td>computer-moustache-jellybox</td>
+                    <td>x</td>
+                    <td>B7!</td>
+                </tr>
+            </table>
+            
+            <br>
+            <br>
+            
+            <table border="1" class="pw">
+                <tr class="colorTableHead" style="color:#00008B"><td>Website</td><td>Password</td>
+                    <td></td>
+                </tr>
+                <tr><td>xylophone</td>
+                    <td><input name="I100" type="text" autocorrect="off";
+                        autocomplete = "off";
+                        autocapitalize = "off"; ></td>
+                    <td> <div id = "p_hint100" class = "hint" style="display:none;"> </div> </td>
+                </tr>
+            </table>
+            
+            <br>
+            
+            <div id="I1_checkButton" style="display:block;" class="buttonlink" onclick=" I1_eval();"><font font="">Check</font></div>
+            
+            <h3 name="I1_try" style="display:none ;color:red"> Please try again and press the check button. </h3>
+            <h3 name = "I1_correct" class="correct" style = "display:none" > Correct! </h3>
+            
+            <div id="I_hint100" class = "container3" style="display:none">
+                
+                <ul>
+                    <li> <font color = red><b>x</b> goes to <b>c</b>. </font>
+                        <b>x</b> appears in jellybo<b>x</b>. <u>Wrap around</u> to find the letter after it which is <b>c</b>.</li>
+                    <br>
+                    
+                    <li><font color = red><b>y</b> goes to <b>b</b>.</font>
+                        <b>y</b> appears in jell<b>y</b>box. You should output the consonant after it which is <b>b</b>.</li>
+                    <br>
+                    
+                    <li><font color = red><b>l</b> goes to <b>l</b>.</font>
+                        <b>l</b> appears in je<b>l</b>lybox. You should output the consonant after it which is <b>l</b>.</li>
+                    <br>
+                    
+                    <li><font color = red><b>o</b> goes to <b>m</b>.</font>
+                        <b>o</b> appears in c<b>o</b>mputer. You should output the consonant after it which is <b>m</b>.</li>
+                    <br>
+                    
+                    <li>  <font color = red><b>p</b> goes to <b>t</b></font>.
+                        <b>p</b> appears in com<b>p</b>uter. You should output the <u>consonant after it</u> which is <b>t</b>.</li>
+                    <br>
+                    
+                    <li> <font color = red><b>h</b> goes to <b>j</b>.</font>
+                        <b>h</b> appears in moustac<b>h</b>e. You should output the <u>consonant after it</u> which is <b>j</b> in <b>j</b>ellybox.</li>
+                    <br>
+                    
+                    <li><font color = red><b>o</b> goes to <b>m</b>.</font>
+                        <b>o</b> appears in c<b>o</b>mputer. You should output the consonant after it which is <b>m</b>.</li>
+                    <br>
+                    
+                    <li> <font color = red><b>n</b> goes to <b>x</b>.</font>
+                        <b>n</b> does not appear in the word sequnece, so you should output the wildcard <b>x</b>.</li>
+                    <br>
+                    
+                    <li> <font color = red><b>e</b> goes to <b>r</b>.</font>
+                        <b>e</b> appears in comput<b>e</b>r. You should output the consonant after it which is <b>r</b>.</li>
+                    <br>
+                    
+                    <li><font color = red>Add the string </font> <b>B7!</b> to the end of your password.</li>
+                    <br>
+                </ul>
+                
+            </div>
+            
+            
+            <div id="great" style="display:none">
+                Great! You just learned a new strategy for generating secure passwords. In the next page, we will ask you to design such a method for yourself.
+            </div>
+            <br>
+            <br>
+            
+            <div id="I1_nextButton" class="buttonlink" style="display:none" onclick="gname('instruction_time').value = tock(); gid('instructions').style.display = 'none'; gid('3words').style.display = 'block'; pauseVideo(); tick()">Next</div>
+            
+            <!-- <div id="I1_skipButton" class="buttonlink" style="display:block" onclick=" gid('instructions').style.display = 'none'; gid('3words').style.display = 'block'; pauseVideo();">Skip</div> -->
+            
+        </div>
+        
+        
+        <!------------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        
+        <div id="3words" style="display:none; width:600px; margin-left:10px">
+            
+            
+              <ul>
+                <li align= "justify">Now we are going to ask you to choose three words that are easy for you to remember and cover at least 15 different letters of the alphabet. For example, <font color="blue">computer-moustache-jellybox</font> is an adequate three words as it covers the <font color="blue"> 16 letters </font> abcehjlmoprstuxy, while the three words
+                    <font color="red">dog-cat-bird</font> only cover the <font color="red">9 letters</font> abcdgiort.
+                    
+                    <table>
+                        <tr>
+                            <td>
+                                
+                    <table style="width:100%">
+                        <tr>
+                            <th><input type="text" size="20" class="form-control" name="Word1" placeholder="word1" autocorrect="off";
+                                autocomplete = "off";
+                                autocapitalize = "off";> </th>
+                            
+                            <th><input type="text" size="20" class="form-control" name="Word2" placeholder="word2" autocorrect="off";
+                                autocomplete = "off";
+                                autocapitalize = "off";></th>
+                            
+                            <th><input type="text" size="20" class="form-control" name="Word3" placeholder="word3" autocorrect="off";
+                                autocomplete = "off";
+                                autocapitalize = "off";></th>
+                        </tr>
+                        </table>
+                    
+                    </td>
+                        </tr>
+                        
+                        <tr>
+                            <td>
+                                
+                                <table border="1" class = "pw" style="width:100%">
+                                    <tr>
+                                        <td id="a">a</td> <td id="b">b</td> <td id="c">c</td> <td id="d">d</td> <td id="e">e</td> <td id="f">f</td> <td id="g">g</td> <td id="h">h</td> <td id="i">i</td> <td id="j">j</td> <td id="k">k</td> <td id="l">l</td> <td id="m">m</td> <td id="n">n</td> <td id="o">o</td> <td id="p">p</td> <td id="q">q</td> <td id="r">r</td> <td id="s">s</td> <td id="t">t</td> <td id="u">u</td> <td id="v">v</td> <td id="w">w</td> <td id="x">x</td> <td id="y">y</td> <td id="z">z</td>
+                                    </tr>
+                                </table>
+                                
+                                <div id = "crossedMessage" style = "display:none">
+                                    <p> <font color="green"> We crossed out the letters of the alphabet that you used.</font><p>
+                                </div>
+                                
+                        </td>
+                            </tr>
+                        
+                    </table>
+                    </li>
+
+                    
+                    <br>
+                    <li> Choose a letter as the wildcard:
+                        <table>
+                            <tr>
+                                <td>
+                                    <input name="wildcard" type="text" maxlength="20" size="20" placeholder="Wildcard" autocorrect="off";
+                                        autocomplete = "off";
+                                        autocapitalize = "off";>
+                            </td>
+                                </tr>
+                            </table>
+                            <br>
+                            </li>
+                    
+                            <br>
+                            <li>Choose a special string that contains an uppercase letter, a number and a special character:
+                                <br>
+                                
+                            <table>
+                                <tr>
+                                    <td>
+                                            
+                                        <input name="specialString" type="text" maxlength="20" size="20" placeholder="Special String" autocorrect="off";
+                                                autocomplete = "off";
+                                                autocapitalize = "off";>
+                                            
+                                            </td>
+                                </tr>
+                            </table>
+                            </li>
+                            </ul>
+            
+            <div id="I2_validateButton" style="display:block;" class="buttonlink2" onclick="secretKeyValidated();">Validate</div>
+            
+            
+            <div id="tryPasswords" style="display:none";>
+                <p>GREAT! Now try to generate a couple of passwords using the method that you learned.</p>
+                
+                <table align="center" border="1" class="pw">
+                    <tr class="colorTableHead" style="color:#00008B"><td>Website</td><td>Password</td>
+                        <td></td>
+                    </tr>
+                    <tr><td>amazon</td>
+                        <td><input name="I200" type="text" autocorrect="off";
+                            autocomplete = "off";
+                            autocapitalize = "off"; ></td>
+                        <td> <div id = "p_hint200" class = "hint" style="display:none;"> </div> </td>
+                    </tr>
+                    <tr><td>bestbuy</td>
+                        <td><input name="I201" type="text" autocorrect="off";
+                            autocomplete = "off";
+                            autocapitalize = "off";></td>
+                        <td> <div id = "p_hint201" class = "hint" style="display:none;"> </div></td>
+                    </tr>
+                </table>
+                <br>
+            </div>
+            
+            <br>
+            <br>
+            <br>
+            
+            <!-- aligning the buttons -->
+            <table>
+                <!-- first row -->
+            <tr>
+                <td>
+            <div id="I2_checkButton" style="display:none;" class="buttonlink2" onclick="I2_activateHints();" ><font font="">Check</font></div>
+            
+            <div id = "I2_nextButton" class="buttonlink2" style="display:none" onclick="gname('make3words_time').value = tock(); gid('3words').style.display = 'none'; gid('fun_div').style.display = 'block'; tick();"> Next </div>
+            </td>
+                
+                <td>
+            <div id="I2_instructionsHint" class="hintbutton" style="display:none" onclick ="showInstructions1()"> Show instructions </div>
+            </td>
+                </tr>
+            
+            <tr>
+                <td>
+            <h3 name="p_try" style="display:none ;color:red"> Try again! </h3>
+            <h3 name = "p_correct" class="correct" style = "display:none" > Correct! </h3>
+            </td>
+                <td>
+                    </td>
+                </tr>
+
+            </table>
+
+            <div id = "instructionHint"  style="display:none">
+                
+                <div class="container">
+                    <h4>Given a website name, e.g., <font color="black">apple</font>, generate your password as follows:</h4>
+                    <ol>
+                        <li>Start at the first letter of <font color="black">apple</font>, (<font color="black"> a </font>).</li>
+                        <li>Find the first occurrence of the letter in your word sequence and output the <u>next consonant</u>.
+                            <ul>
+                                <li> If the letter does not appear in your word sequence, output the wildcard.</li>
+                                <li> If the letter is the last letter in your word sequence, wrap around.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Repeat on the remaining letters of <font color="black">apple</font> till you reach the end.
+                        </li>
+                        <li>
+                            Attach the special string.
+                        </li>
+                    </ol>
+                    <br>
+                    
+                </div> <!-- end of container -->
+                
+            </div>     <!--  end of instructionHint -->
+            
+            
+            
+        </div>
+  
+        
+        <!------------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div id="fun_div" style="display:none;" class="container2">
+            
+            
+            <div id="introMessage" style = "display:block">
+            <h1>Try generating passwords</h1>
+            
+                <div class="container3">
+                    Let's try this method to generate passwords for a few websites. Try to remember the information that you memorized and type passwords on your own. Don't worry if you get the password wrong; we won't reject you based on your performance. We only want to evaluate the usability of our method. If you couldn't remember something, click on the green hint buttons.</b></li>
+                </div>
+            </div>
+            
+            <h2 id="webCounter" margin-left:20px style="display:block"></h2>
+            
+            
+            
+            <div id="lastTable" style="display:none">
+                <table align="center" >
+                    <tr>
+                        <td>
+                            <table align="center" border="1" >
+                                <tr><td style="padding: 20px;">Website Name</td><td style="padding: 20px;" >Password</td></tr>
+                                <tr>
+                                    <td id="website_name" style="font-size:20px;font-weight:900; padding: 20px;"></td>
+                                    <td id="password_field"  style="padding: 20px;">
+                                        <textarea class="autoOff" cols="20" name="q0" placeholder="Type password" style="font-size:18px" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q1" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q2" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q3" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q4" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q5" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q6" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q7" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q8" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q9" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q10" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q11" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q12" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q13" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                        <textarea cols="20" name="q14" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                            autocomplete = "off";
+                                            autocapitalize = "off";></textarea>
+                                        
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="verify_div"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            
+           <p>&nbsp;</p>
+           <div class="buttonlink" id="eval_button" onclick="eval_click_password();">Begin</div>
+           <p>&nbsp;</p>
+           
+           <table>
+           <tr>
+           <td>
+            <div class="hintbutton" onclick ="showWords()"> Show my words </div>
+            </td>
+                <td>
+            <div class="hintbutton" onclick ="showInstructions2()"> Show instructions </div>
+            </td>
+            </tr>
+            </table>
+           
+            <br>
+            <br>
+            <br>
+           
+            <div id = "instHint2"  style="display:none">
+                
+                
+                <div class="container3">
+                    <h4>Given a website name, e.g., <font color="black"> apple </font>, generate your password as follows:</h4>
+                    <ol>
+                        <li>Start at the first letter of <font color="black">apple</font>, (<font color="black"> a </font>).</li>
+                        <li>Find the first occurrence of the letter in your word sequence and output the <u>next consonant</u>.
+                            <ul>
+                                <li> If the letter does not appear in your word sequence, output the wildcard.</li>
+                                <li> If the letter is the last letter in your word sequence, wrap around.</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Repeat on the remaining letters of <font color="black">apple</font> till you reach the end,
+                        </li>
+                        <li>
+                            Attach the special string.
+                        </li>
+                    </ol>
+                    <br>
+                    
+                </div>
+                
+            </div>
+            <br>
+            <div id = "3wordhint" class = "container3" style="display:none">
+                <table border="1">
+                    <tr>
+                        <th>3Words</th>
+                        <th>Wildcard</th>
+                        <th>Special String</th>
+                    </tr>
+                    <tr>
+                        <td><div id = "hintWords"    > hello </div> </td>
+                        <td><div id = "hintWildcard" > hello </div> </td>
+                        <td><div id = "hintSpecialString"> hello</div> </td>
+                    </tr>
+                </table>
+            </div>
+            
+            <br>
+            <br>
+            <br>
+            
+        </div>
+        
+        
+        <!------------------------------------------------------------------------------------------------------------------------------------------------->
+        
+        <div id="feedback" style="display:none; margin-left:30px">
+            
+            <h2> <font color = "green">Feedback </font></h2>
+            
+            <p align="left"> Thank you so much for trying our password strategy. Please help us improve this HIT by answering the following questions.</p>
+            <p align="left"><font color="blue"> Please answer honestly, we are doing this study for research purposes and you will be paid regardless of your answers.</font></p>
+            
+            <ul>
+                <li><h4> How fun or borring was the task? </h4>
+
+                    <table>
+                        <tr>
+                            <td>Extremely boring       <input id = "q11" type="radio" name="q1" value="-3"></td>
+                            <td>Very boring            <input id = "q12" type="radio" name="q1" value="-2"></td>
+                            <td>Slightly boring        <input id = "q13" type="radio" name="q1" value="-1"></td>
+                            <td>Neither boring nor fun <input id = "q14" type="radio" name="q1" value="0"></td>
+                            <td>Slightly fun            <input id = "q15" type="radio" name="q1" value="1"></td>
+                            <td>Very fun                <input id = "q16" type="radio" name="q1" value="2"></td>
+                            <td>Extremely fun           <input id = "q17" type="radio" name="q1" value="3"></td>
+                        </tr>
+                        </table>
+                    
+                
+                <li><h4> How easy or hard was the task? </h4>
+                    
+                    
+                    <table >
+                        <tr>
+                            <td>Extremely hard                  <input id = "q21" type="radio" name="q2" value="-3"></td>
+                            <td>Very hard                       <input id = "q22" type="radio" name="q2" value="-2"></td>
+                            <td>Slightly hard                   <input id = "q23" type="radio" name="q2" value="-1"></td>
+                            <td>Neither hard nor easy           <input id = "q24" type="radio" name="q2" value="0"></td>
+                            <td>Slightly easy                   <input id = "q25" type="radio" name="q2" value="1"></td>
+                            <td>Very easy                       <input id = "q26" type="radio" name="q2" value="2"></td>
+                            <td>Extremely easy                  <input id = "q27" type="radio" name="q2" value="3"></td>
+                        </tr>
+                    </table>
+                    
+                    
+                    
+                <li><h4> Did password generation become easier or harder towards the end?</h4>
+                    
+                    <table>
+                        <tr>
+                            <td>Extremely harder            <input id = "q31" type="radio" name="q3" value="-3"></td>
+                            <td>Much harder                 <input id = "q32" type="radio" name="q3" value="-2"></td>
+                            <td>slightly harder             <input id = "q33" type="radio" name="q3" value="-1"></td>
+                            <td>Neither harder nor easier   <input id = "q34" type="radio" name="q3" value="0"></td>
+                            <td>Slightly easier             <input id = "q35" type="radio" name="q3" value="1"></td>
+                            <td>Much easier                 <input id = "q36" type="radio" name="q3" value="2"></td>
+                            <td>Extremely easier            <input id = "q37" type="radio" name="q3" value="3"></td>
+                            </tr>
+                        </table>
+
+                <li> <h4>Did you write anything down?</h4>
+                    
+                    <table>
+                        <tr>
+                            <td>Yes<input id = "q41" type="radio" name="q4" value="1"></td>
+                            <td>No<input id =  "q42"  type="radio" name="q4" value="0"></td>
+                            </tr>
+                    </table>
+                    
+                
+                <li>
+                    <h4>Would you like to participate in (paid) follow-up surveys over the next few weeks? If yes, we will contact you with email.</h4>
+                    
+                    <table>
+                        <tr>
+                            <td>Yes<input id = "q51" type="radio" name="q5" value="Yes"></td>
+                            <td>No <input id = "q52" type="radio" name="q5" value="No"></td>
+                        </tr>
+                    </table>
+               </li>
+                    
+                <li>
+                    <h4>Any other feedback? We'd love to hear!</h4>
+                    <textarea rows="4" cols="100" placeholder="Feedback" name="feedback"></textarea>
+                    
+                    </li>
+            </ul>
+            
+            
+            <!-- <p>For more information on password strategies, visit <a href="http://safepasswords.org">our website </a>. -->
+            
+            <div class="buttonlink" id="saveFeedbackButton" onclick="saveFeedback()">Save Feedback</div>
+            
+            <div id = "saveFeedbackDiv" style = "display:none" >
+                
+                <h3><font color=green>Thank You!! You may now submit this HIT.</font> </h3>
+                
+                
+            </div>
+            
+            <!-- </div> -->
+        </div>
+        
+        
+        <input type="hidden" name="wordHintCount" value="0" />
+        <input type="hidden" name="instHintCount" value="0" />
+        <input type="hidden" name="instruction_time" value="0" />
+        <input type="hidden" name="make3words_time" value="0" />
+        <input type="hidden" name="saved3Words" value="0" />
+        <input type="hidden" name="feedback_time" value="0" />
+
+        
+        <input type="hidden" name="funValue" value="0" />
+        <input type="hidden" name="easinessValue" value="0" />
+        <input type="hidden" name="easinessIncreaseValue" value="0" />
+        <input type="hidden" name="wroteDown" value="0" />
+        <input type="hidden" name="followUpSurveys" value="0" />
+        
+        <input type="hidden" name="q0_time" value="0" />
+        <input type="hidden" name="q1_time" value="0" />
+        <input type="hidden" name="q2_time" value="0" />
+        <input type="hidden" name="q3_time" value="0" />
+        <input type="hidden" name="q4_time" value="0" />
+        <input type="hidden" name="q5_time" value="0" />
+        <input type="hidden" name="q6_time" value="0" />
+        <input type="hidden" name="q7_time" value="0" />
+        <input type="hidden" name="q8_time" value="0" />
+        <input type="hidden" name="q9_time" value="0" />
+        <input type="hidden" name="q10_time" value="0" />
+        <input type="hidden" name="q11_time" value="0" />
+        <input type="hidden" name="q12_time" value="0" />
+        <input type="hidden" name="q13_time" value="0" />
+        <input type="hidden" name="q14_time" value="0" />
+     
+        
+        <input type="hidden" name="q0_correct" value="0" />
+        <input type="hidden" name="q1_correct" value="0" />
+        <input type="hidden" name="q2_correct" value="0" />
+        <input type="hidden" name="q3_correct" value="0" />
+        <input type="hidden" name="q4_correct" value="0" />
+        <input type="hidden" name="q5_correct" value="0" />
+        <input type="hidden" name="q6_correct" value="0" />
+        <input type="hidden" name="q7_correct" value="0" />
+        <input type="hidden" name="q8_correct" value="0" />
+        <input type="hidden" name="q9_correct" value="0" />
+        <input type="hidden" name="q10_correct" value="0" />
+        <input type="hidden" name="q11_correct" value="0" />
+        <input type="hidden" name="q12_correct" value="0" />
+        <input type="hidden" name="q13_correct" value="0" />
+        <input type="hidden" name="q14_correct" value="0" />
+        
+        
+        <input type="hidden" name="q0_1" value="-1" />
+        <input type="hidden" name="q1_1" value="-1" />
+        <input type="hidden" name="q2_1" value="-1" />
+        <input type="hidden" name="q3_1" value="-1" />
+        <input type="hidden" name="q4_1" value="-1" />
+        <input type="hidden" name="q5_1" value="-1" />
+        <input type="hidden" name="q6_1" value="-1" />
+        <input type="hidden" name="q7_1" value="-1" />
+        <input type="hidden" name="q8_1" value="-1" />
+        <input type="hidden" name="q9_1" value="-1" />
+        <input type="hidden" name="q10_1" value="-1" />
+        <input type="hidden" name="q11_1" value="-1" />
+        <input type="hidden" name="q12_1" value="-1" />
+        <input type="hidden" name="q13_1" value="-1" />
+        <input type="hidden" name="q14_1" value="-1" />
+        
+        
+        <input type="hidden" name="q0_2" value="-1" />
+        <input type="hidden" name="q1_2" value="-1" />
+        <input type="hidden" name="q2_2" value="-1" />
+        <input type="hidden" name="q3_2" value="-1" />
+        <input type="hidden" name="q4_2" value="-1" />
+        <input type="hidden" name="q5_2" value="-1" />
+        <input type="hidden" name="q6_2" value="-1" />
+        <input type="hidden" name="q7_2" value="-1" />
+        <input type="hidden" name="q8_2" value="-1" />
+        <input type="hidden" name="q9_2" value="-1" />
+        <input type="hidden" name="q10_2" value="-1" />
+        <input type="hidden" name="q11_2" value="-1" />
+        <input type="hidden" name="q12_2" value="-1" />
+        <input type="hidden" name="q13_2" value="-1" />
+        <input type="hidden" name="q14_2" value="-1" />
+        
+        
+        <input type="hidden" name="q0_3" value="-1" />
+        <input type="hidden" name="q1_3" value="-1" />
+        <input type="hidden" name="q2_3" value="-1" />
+        <input type="hidden" name="q3_3" value="-1" />
+        <input type="hidden" name="q4_3" value="-1" />
+        <input type="hidden" name="q5_3" value="-1" />
+        <input type="hidden" name="q6_3" value="-1" />
+        <input type="hidden" name="q7_3" value="-1" />
+        <input type="hidden" name="q8_3" value="-1" />
+        <input type="hidden" name="q9_3" value="-1" />
+        <input type="hidden" name="q10_3" value="-1" />
+        <input type="hidden" name="q11_3" value="-1" />
+        <input type="hidden" name="q12_3" value="-1" />
+        <input type="hidden" name="q13_3" value="-1" />
+        <input type="hidden" name="q14_3" value="-1" />
+        
+        <input type="submit" id="submitButton">
+        
+        
+    </body>
+</html>

@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title></title>
+        <script>
+
+        
+        
+        var websites = ["kite", "pillow", "atlantic", "bundle", "reverse" , "family", "quebec", "cough", "subject", "mugg", "spike", "fishing", "jumper", "knob", "chord", "quiz", "fixed", "world", "campain", "warm", "navy", "banquet", "hazy", "chef", "twist"];
+        
+        var challenges = [];
+        // we assume that 75% of accounts that the user uses daily comes from the common websites (the first 15 in the list)
+        // we assume that 25% of accounts that the user uses daily comes from the uncommon websites (the last 10 in the list)
+        
+        var w1 = .75
+        var w2 = .25
+        var commonWebsitesLength = 15;
+        var rareWebsitesLength =  10;
+        
+        // inja change users
+        var users = [
+            {'id': '1' , 'letterCode':'mvwrdcdqzzcmztxfmxtn', 'specialString':'W1?'},
+            {'id': '2' , 'letterCode':'zlrjvzszpjxlmkykycyd', 'specialString':'S8!'}
+        ];
+        
+        var done_can_submit = false;
+        
+        var key = "";
+        var challenge = "";
+        var count = 0;
+        var cResponse = "";
+        var vowels = "aeiou";
+        var flag2 = 1;
+        var webCounterVar = 1;
+        var newWebFlag = 1;
+        var extraLetters = "uvwxyz"
+        var lmap = new Array(40);
+        
+        var letterCode = "";
+        var specialString = "";
+        
+        var letterCodeHintCountVar = [];
+        var instHintCountVar = [];
+        
+        
+        function gid(id) {
+            return document.getElementById(id);
+        }
+        
+        function gname(name) {
+            return document.getElementsByName(name)[0];
+        }
+        
+        var timer;
+        function tick() {
+            timer = new Date();
+        }
+        
+        function tock() {
+            return (new Date() - timer);
+        }
+        
+        setInterval(function () {
+                    var button = gid("submitButton");
+                    if (!button) return;
+                    button.style.display = done_can_submit ? "block" : "none";
+                    button.disabled = !done_can_submit;
+                    }, 100)
+                    
+        function answer_password(challenge) {
+                        
+            var result = "";
+            challenge.toLowerCase().split("").forEach(function (ch) {
+                    if(extraLetters.indexOf(ch) == -1 ){
+                        result += lmap[ch.charCodeAt(0) - 'a'.charCodeAt(0)];
+                    }
+            });
+                
+            SPECIAL = specialString;
+            result = result + SPECIAL;
+            return result;
+        }
+        
+        function check_answerPassword(challenge, guess) {
+            
+            var a = answer_password(challenge);
+            
+            if (a == guess ){
+                return 1;
+            }
+            else{
+                return 0;
+            }
+        }
+     
+        
+        var tries = 1;
+        var verify = false;
+        var qnum = 0;
+
+        function eval_click_password(){
+        
+        // When the user presses Begin or Next
+        if ( (gid("eval_button").innerHTML == "Begin") || (gid("eval_button").innerHTML == "Next")){
+        
+            gid("introMessage").style.display = "none";
+            gid("lastTable").style.display = "block";
+            nextWeb();
+            return;
+        }
+    
+        hideLetterCodeHint();
+        hideInstHint();
+        flag2 = 1;
+    
+        var guess = gname("q" + qnum ).value.trim();
+        var gold = check_answerPassword(challenges[qnum], guess);
+        var correctPass = answer_password(challenges[qnum]);
+        var html;
+    
+        //logging
+        console.log("guess: " + guess);
+        console.log("correctPass: " + correctPass);
+    
+        // user typed an empty password
+        if (guess == "" && (gid("eval_button").innerHTML == "Submit password")){
+                gid("verify_div").innerHTML = "<span class='wrong'>Please enter a password.</span>"
+                return;
+            }
+    
+            if ((tries <= 3) && (!verify)){
+        
+                gname("q"+qnum+"_"+tries).value = gold;
+                console.log("q" + qnum + "_" +tries + ": " + gname("q"+qnum+"_"+tries).value)
+        
+                // last try and password is wrong
+                if ((tries == 3)  && (gold == 0)){
+            
+                    html = "<span class='wrong'>The correct answer would be <span class='pw'>" + correctPass + "</span>";
+                    gname("q" + qnum + "_correct").value = "0";
+                    gid("eval_button").innerHTML = "Next";
+                    gname("q" + (qnum)).readOnly = true;
+                    gname("q" + qnum + "_time").value = tock();
+                    console.log("q" + qnum + "_time : " + gname("q" + qnum + "_time").value );
+                    verify = true;
+                }
+        
+                else{
+                    // Less than three tries and the password is wrong
+                    if (gold == 0){
+                        html = "<span class='wrong'>Try again!</span>";
+                        gname("q" + qnum).value = "";
+                        tries = tries + 1
+                
+                    }
+                    // less than or equal to three tries and the password is correct
+                    else{
+                        html = "<span class='correct'>CORRECT!</span>";
+                        gname("q" + qnum + "_correct").value = "1";
+                        gid("eval_button").innerHTML = "Next";
+                        gname("q" + qnum).readOnly = true;
+                        gname("q" + qnum + "_time").value = tock();
+                        console.log("q" + qnum + "_time : " + gname("q" + qnum + "_time").value );
+                        verify = true;
+                    }
+                }
+                gid("verify_div").innerHTML = html;
+                console.log("q"+ qnum + "_correct"+ ": " + gname("q" + qnum + "_correct").value );
+            }
+        }
+        
+        function increaseInstHintCount(){
+            instHintCountVar[qnum]++;
+            console.log("instHintCountVar[" + qnum + "]: " + instHintCountVar[qnum])
+        }
+        
+        function hideInstHint(){
+            gid("InsHintF").style.display = "none";
+        }
+    
+        
+        function hideLetterCodeHint(){
+            gid("letterCodeHint").style.display = "none";
+        }
+        
+        function nextWeb() {
+            
+            if (gid("eval_button").innerHTML != "Begin"){
+                gname("q" + qnum).style.display = "none"
+                qnum ++;
+            }
+            
+            if (qnum < challenges.length) {
+                gname("q" + qnum).style.display = "block";
+                gid("website_name").innerHTML = challenges[qnum];
+                gid("website_name").style.font.weight = "300";
+            } else {
+                gid("feedback").style.display = "block";
+                gid("fun_div").style.display = "none";
+                
+                gname("letterCodeHintCount").value = letterCodeHintCountVar ;
+                gname("instHintCount").value = instHintCountVar;
+                console.log("letterCodeHintCount: ", gname("letterCodeHintCount").value);
+                console.log("instHintCount: ", gname("instHintCount").value);
+                
+            }
+            
+            verify = false;
+            tries = 1;
+            
+            increaseWebCounter();
+            hideLetterCodeHint();
+            hideInstHint();
+            flag2 = 1;
+            
+            gid("verify_div").innerHTML = "";
+            gid("eval_button").innerHTML = "Submit password";
+            
+            tick();
+            console.log("tick!")
+        }
+        
+        function increaseWebCounter(){
+            gid("webCounter").innerHTML = webCounterVar + "/" + challenges.length;
+            webCounterVar = webCounterVar + 1;
+        }
+        
+        
+        function findNextLetter(index,key) {
+            var isFound = false;
+            while(!isFound) {
+                
+                if (index >= key.length) {
+                    index = 0;
+                }
+                
+                if (vowels.indexOf(key.substring(index,index+1)) != -1) {
+                    
+                    index +=1;
+                    if (index >= key.length) {
+                        index = 0;
+                    }
+                } else {
+                    isFound = true
+                }
+            }
+            return key.substring(index,index+1);
+        }
+        
+        function showInstructionsFinalPage(){
+            if (instFlag == +1){
+                gid("InsHintF").style.display = "block";
+                // inja
+                var sString = specialString;
+                //var sString = "H8*"
+                gid("stringHint").innerHTML = sString;
+                increaseInstHintCount();
+                
+            }
+            if(instFlag == -1){
+                gid("InsHintF").style.display = "none";
+            }
+            instFlag = instFlag * -1;
+            
+        }
+        
+        function validID() {
+            var id = gname('uid').value;
+            for (var i=0; i<users.length; i++) {
+                if (users[i].id == id) {
+                    user = users[i];
+                    letterCode = user.letterCode;
+                    specialString = user.specialString;
+                    
+                    setChallenges();
+                    setLetterCode();
+                    
+                    console.log("challenges: ", challenges)
+                    console.log("challenges[0]: ", challenges[0])
+                    
+                    var letterCodeHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+                    var instHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+                    
+                    return true;
+                } 
+            }
+            return false;
+        }
+        
+        function setLetterCode(){
+            console.log("inside setLetterCode")
+            for (i = 0; i < letterCode.length; i++){
+                lmap[i] = letterCode.charAt(i);
+                console.log("lmap["+i+"]: ", lmap[i])
+                gid("fh_lmap" + (i+1)).innerHTML = lmap[i]
+            }
+            gname("specialStringHint").innerHTML = specialString;
+        }
+        
+        
+        function checkUserID() {
+            if (validID()) {
+                gid('userID').style.display = 'none'; 
+                gid('fun_div').style.display='block';
+                tick(); 
+            } else {
+                alert("Please enter a correct ID.");
+            }
+        }
+        
+        function setChallenges(){
+            
+            var webs = "";
+            
+            for (i = 0; i < 4; i++){
+                var randomNumber = Math.random();
+                
+                if (randomNumber <= .75 ){
+                    var web = websites [ getRandomInt(0, commonWebsitesLength) ];
+                    
+                    while (webs.includes(web)){
+                        
+                        web = websites [ getRandomInt(0, commonWebsitesLength) ];
+                    }
+                    challenges.push(web);
+                    webs = webs + web;
+                    
+                } else {
+                    var web = websites [ getRandomInt(commonWebsitesLength, websites.length)]
+                    
+                    while(webs.includes(web)){
+                        web = websites [ getRandomInt(commonWebsitesLength, websites.length)]
+                    }
+                    challenges.push(web);
+                    webs = webs + web;
+                }
+            }
+            
+            letterCodeHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+            instHintCountVar = Array.apply(null, Array(challenges.length)).map(Number.prototype.valueOf,0);
+        }
+        
+        // returns a vlaue greater or equal to min and strictly smaller than max.
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+        
+        
+        function showInstructions2(){
+            if (flag2 == 1) {
+                gid("InsHintF").style.display = "block";
+                increaseInstHintCount();
+            }
+            
+            if (flag2 == -1) {
+                gid("InsHintF").style.display = "none"
+            }
+            flag2 = flag2 * -1;
+        }
+        
+        function saveFeedback(){
+            
+            var emptyAnswer = true;
+            
+            for (i=1; i<3; i++){
+                var radio = gid("q1" + i);
+                if (radio.checked){
+                    emptyAnswer = false;
+                    gname("adopted").value = radio.value;
+                }
+            }
+            
+            if (emptyAnswer){
+                alert("please answer the feedback question.")
+                return;
+            }
+            
+            gid("submitHit").style.display = "block";
+            gid("submitFeedback").style.display = "none";
+            done_can_submit = true;
+        
+        }
+        
+        function showLetterCode(){
+            
+            if(gid("letterCodeHint").style.display == "block"){
+                gid("letterCodeHint").style.display="none";
+            }else{
+                gid("letterCodeHint").style.display = "block";
+                increaseLetterCodeHintCount();
+            }
+            
+        }
+        
+        function increaseLetterCodeHintCount(){
+            letterCodeHintCountVar[qnum]++;
+            console.log("letterCodeHintCountVar[" + qnum + "]: " + letterCodeHintCountVar[qnum]);
+        }
+        
+        
+        
+        </script>
+        <style>
+            .pw {
+                font-family: monospace;
+                font-size: 140%;
+                font-weight: bold;
+            }
+        
+        .hint {
+            color: black;
+            border : none;
+            font-size: 100%;
+            font-weight : bold;
+        }
+        
+        .correct {
+            color: green;
+        }
+        
+        .wrong {
+            color: red;
+        }
+        
+        
+        .buttonlink {
+            display: inline-block;
+            border-style: solid;
+            border-color: #bbb #888 #666 #aaa;
+            border-width: 3px 4px 4px 3px;
+            width: 9em;
+            height: 2em;
+            background-color: 	#FAEBD7;
+            line-height: 2;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 900;
+            cursor:pointer;
+        }
+        
+        
+        .buttonlink2 {
+            display: inline-block;
+            border-style: solid;
+            border-color: #bbb #888 #666 #aaa;
+            border-width: 3px 4px 4px 3px;
+            width: 9em;
+            height: 2em;
+            background-color: 	#FAEBD7;
+            line-height: 2;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 900;
+            cursor:pointer;
+            float : left;
+            margin-right:10px;
+        }
+        
+        
+        
+        .hintbutton {
+            display: inline-block;
+            border-style: solid;
+            border-color: #bbb #888 #666 #aaa;
+            border-width: 3px 4px 4px 3px;
+            width: 11em;
+            height: 2em;
+            background-color: #32CD32;
+            line-height: 2;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 900;
+            cursor:pointer;
+            float : left;
+            margin-right:10px;
+        }
+        
+        
+        
+        
+        .buttonlink:hover {
+            border-color: #666 #aaa #bbb #888;
+            border-width: 4px 3px 3px 4px;
+            color: #000;
+        }
+        
+        .visible
+        {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 2s linear;
+        }
+        
+        .hidden
+        {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 2s, opacity 2s linear;
+        }
+        
+        
+        table {
+            border-collapse: collapse;
+            border-spacing: 10px 50px;
+            text-align: center;
+            clear: left;
+            
+        }
+        
+        th, td{
+            padding: 2px;
+            
+        }
+        
+        input {
+            width: 100px;
+            margin: 5px;
+            font-size: 15px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            /*             border: 5px ;  */
+        }
+        
+        .firstPageTable {
+            float:left;
+            margin:1em;
+            width:300px;
+            height:300px;
+            
+        }
+        
+        .colorTableHead {
+            color:#0000FF;
+        }
+        input[type="text"] {
+            width: 85%;
+            height: 100%;
+            box-sizing: border-box;
+            -webkit-box-sizing:border-box;
+            -moz-box-sizing: border-box;
+            style="background-color:#FCF5D8;">
+        }
+        .container{
+            width : 500px;
+            margin-left: 5px;
+        }
+
+        .container3{
+            width : 500px;
+            /* width: 280px; */
+
+        }
+        
+        .container2{
+            width: 500px;
+            border: 2px solid #DAA520;
+            padding: 25px;
+            margin: 25px;
+        }
+        
+        .web{
+            /* Web style */
+
+        }
+        
+        </style>
+    </head>
+    
+
+    <body>
+        <div id="welcome"; style="display:block ; margin-left:50px; margin-right:50px">
+            
+            <center>
+            <div class = "container2"> In this survey, we ask you to type a few passwords, using the method that you learned in the previous study. You should use the same letter code and special string that you chose in the previous study. First, try to remember these yourself and type passwords on your own. Don't worry if you got the password wrong; we won't reject you for this. If you needed help remembering something, press the green hint buttons.
+            </div>
+            </center>
+            <center>
+            <div id="I0_nextButton1" class="buttonlink" style="display:block" onclick="gid('userID').style.display='block'; gid('welcome').style.display = 'none'; tick()">Start</div>
+            </center>
+            <br>
+            <br>
+            
+            
+        </div>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------->
+
+        <div id="userID"; style="display:none; width:600px; margin-left:10px">
+            
+            
+            
+            <table>
+                <tr>
+                    <td>
+                        Please enter your worker ID:
+                        </td>
+                    <td>
+            <input type="text" size="30" class="form-control" name="uid" placeholder="Worker ID" autocorrect="off";
+                    autocomplete = "off";
+                    autocapitalize = "off"; required>
+                    </td>
+                <tr>
+            </table>
+            
+            <div id="idNextButton" class="buttonlink" style="display:block" onclick="checkUserID();">Next</div>
+            </div>
+        
+<!------------------------------------------------------------------------------------------------------------------------------------------------>
+
+    <div id="fun_div" style="display:none;" class="container">
+        
+        <div id="introMessage" style = "display:block">
+            <h2>Let's generate a few passwords!</h2>
+        </div>
+        
+    <h2 id="webCounter" margin-left:20px style="display:block"></h2>
+    
+    <div id="lastTable" style="display:none">
+        <table align="center" >
+            <tr>
+                <td>
+                    <table align="center" border="1" >
+                        <tr><td style="padding: 20px;">Website Name</td><td style="padding: 20px;" >Password</td></tr>
+                        <tr>
+                            <td id="website_name" style="font-size:20px;font-weight:900; padding: 20px;"></td>
+                            <td id="password_field"  style="padding: 20px;">
+                                <textarea class="autoOff" cols="20" name="q0" placeholder="Type password" style="font-size:18px" rows="1" autocorrect="off";
+                                    autocomplete = "off";
+                                    autocapitalize = "off";></textarea>
+                                
+                                <textarea cols="20" name="q1" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                    autocomplete = "off";
+                                    autocapitalize = "off";></textarea>
+                                
+                                <textarea cols="20" name="q2" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                    autocomplete = "off";
+                                    autocapitalize = "off";></textarea>
+                                
+                                <textarea cols="20" name="q3" placeholder="Type password" style="font-size:18px; display:none;" rows="1" autocorrect="off";
+                                    autocomplete = "off";
+                                    autocapitalize = "off";></textarea>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="verify_div"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <p>&nbsp;</p>
+    <div class="buttonlink" id="eval_button" onclick="eval_click_password();">Begin</div>
+    <p>&nbsp;</p>
+    
+    <table>
+        <tr>
+            <td>
+                <div class="hintbutton" onclick ="showLetterCode()"> Show my letter code </div>
+            </td>
+            <td>
+                <div class="hintbutton" onclick ="showInstructions2()"> Show instructions </div>
+            </td>
+        </tr>
+    </table>
+    
+    <br>
+    <br>
+    <br>
+    
+    <div id = "InsHintF"  style="display:none" class = "container2">
+            <ul>
+                <li> Go over the name of the website letter by letter and type the mapping of each letter. </li>
+                <li> Type the special string.
+                    
+                </li>
+                <li> Remember that you memorized the map only for the first 20 letters of the alphabet. If you see <font color="red">u,v,w,x,y,z</font> in the website name, just skip to the next letter. </font></li>
+            </ul>
+        
+    </div>
+    <br>
+    <div id = "letterCodeHint" style="display:none" class = "container2">
+        <table border="1">
+            <tr>
+                <td>
+                    <div> Letter Code</div>
+                </td>
+                <td>
+                    
+                    <table border="1">
+                        <tr>
+                            <td>a</td> <td>b</td> <td>c</td> <td>d</td> <td>e</td> <td>f</td> <td>g</td> <td>h</td> <td>i</td> <td>j</td> <td>k</td> <td>l</td> <td>m</td> <td>n</td>
+                            <td>o</td> <td>p</td> <td>q</td> <td>r</td> <td>s</td> <td>t</td>
+                        </tr>
+            
+                        <tr>
+                            <td><div id="fh_lmap1"></div></td>
+                            <td><div id="fh_lmap2"></div></td>
+                            <td><div id="fh_lmap3"></div></td>
+                            <td><div id="fh_lmap4"></div></td>
+                            <td><div id="fh_lmap5"></div></td>
+                            <td><div id="fh_lmap6"></div></td>
+                            <td><div id="fh_lmap7"></div></td>
+                            <td><div id="fh_lmap8"></div></td>
+                            <td><div id="fh_lmap9"></div></td>
+                            <td><div id="fh_lmap10"></div></td>
+                            <td><div id="fh_lmap11"></div></td>
+                            <td><div id="fh_lmap12"></div></td>
+                            <td><div id="fh_lmap13"></div></td>
+                            <td><div id="fh_lmap14"></div></td>
+                            <td><div id="fh_lmap15"></div></td>
+                            <td><div id="fh_lmap16"></div></td>
+                            <td><div id="fh_lmap17"></div></td>
+                            <td><div id="fh_lmap18"></div></td>
+                            <td><div id="fh_lmap19"></div></td>
+                            <td><div id="fh_lmap20"></div></td>
+                            </tr>
+                    </table>
+                </td>
+                
+                </tr>
+            
+                <tr>
+                    <td>
+                        <div> Special String</div>
+                        </td>
+                    <td>
+                        <div name = "specialStringHint"></div>
+                        </td>
+                    </tr>
+                </table>
+        
+    </div>
+    
+    </div>
+    
+    
+    
+    <!-------------------------------------------------------------------------------------------------------------------------->
+
+<div id="feedback" style="display:none; margin-left:30px">
+    
+            <h1 align="left"><font color = green> Feedback </font></h1>
+            
+            <p> Please answer honestly, this feedback is only for our research purposes and does not affect the acceptance of your work.</p>
+            <ul>
+                
+                <li>
+                    <h4>Did you adopt this password strategy for your own passwords?</h4>
+                    <table>
+                        <tr>
+                            <td>Yes<input id = "q11" type="radio" name="q1" value="1"></td>
+                            <td>No <input id = "q12" type="radio" name="q1" value="0"></td>
+                        </tr>
+                    </table>
+                </li>
+                
+                
+                
+                <li>
+                    <h4>Any feedback?</h4>
+                    <textarea rows="4" cols="100" placeholder="Feedback" name="feedback"></textarea>
+                    
+                </li>
+                </ul>
+            
+            <div class="buttonlink" id="submitFeedback" onclick="saveFeedback();">Done!</div>
+            
+            <div id="submitHit" style="display:none">
+            <p>  You may now submit this HIT. </p>
+            </div>
+            
+        </div>
+
+        <input type="hidden" name="letterCodeHintCount" value="0" />
+        <input type="hidden" name="instHintCount" value="0" />
+        
+        <input type="hidden" name="adopted" value="0" />
+
+        <input type="hidden" name="q0_time" value="0" />
+        <input type="hidden" name="q1_time" value="0" />
+        <input type="hidden" name="q2_time" value="0" />
+        <input type="hidden" name="q3_time" value="0" />
+
+        <input type="hidden" name="q0_correct" value="0" />
+        <input type="hidden" name="q1_correct" value="0" />
+        <input type="hidden" name="q2_correct" value="0" />
+        <input type="hidden" name="q3_correct" value="0" />
+
+
+        <input type="hidden" name="q0_1" value="-1" />
+        <input type="hidden" name="q1_1" value="-1" />
+        <input type="hidden" name="q2_1" value="-1" />
+        <input type="hidden" name="q3_1" value="-1" />
+
+
+        <input type="hidden" name="q0_2" value="-1" />
+        <input type="hidden" name="q1_2" value="-1" />
+        <input type="hidden" name="q2_2" value="-1" />
+        <input type="hidden" name="q3_2" value="-1" />
+
+
+
+        <input type="hidden" name="q0_3" value="-1" />
+        <input type="hidden" name="q1_3" value="-1" />
+        <input type="hidden" name="q2_3" value="-1" />
+        <input type="hidden" name="q3_3" value="-1" />
+
+        <input type="submit" id="submitButton">
+    
+    </body>
+    
+    
+</html>
